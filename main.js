@@ -1,13 +1,24 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
+const { app, BrowserWindow } = require('electron')
+const ProtocolHandler = require('./ProtocolHandler');
+const PROTOCOL_SCHEME = 'myapp';
+const PROTOCOL_PARAMETER_KEY = 'key';
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
-function createWindow () {
+const protocolHandler = new ProtocolHandler(PROTOCOL_SCHEME, (linkUrl) => {
+  if (mainWindow && mainWindow.webContents) {
+    mainWindow.webContents.send('DEEP_LINK', linkUrl.searchParams.get(PROTOCOL_PARAMETER_KEY));
+    return true;
+  }
+  return false;
+});
+
+function createWindow() {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600})
+  mainWindow = new BrowserWindow({ width: 800, height: 600 })
 
   // and load the index.html of the app.
   mainWindow.loadFile('index.html')
@@ -22,6 +33,12 @@ function createWindow () {
     // when you should delete the corresponding element.
     mainWindow = null
   })
+
+  mainWindow.webContents.once('dom-ready', () => {
+    // Handle initial openUrl request
+    console.log('dom-ready');
+    protocolHandler.onAppReady();
+  });
 }
 
 // This method will be called when Electron has finished
