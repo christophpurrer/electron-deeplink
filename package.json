@@ -3,7 +3,16 @@
   "version": "1.0.0",
   "description": "A minimal Electron application",
   "main": "main.js",
+  "build": {
+    "protocols": {
+      "name": "myapp",
+      "schemes": [
+        "myapp"
+      ]
+    }
+  },
   "scripts": {
+    "dist": "npm install && electron-builder",
     "start": "electron ."
   },
   "repository": "https://github.com/electron/electron-quick-start",
@@ -17,6 +26,7 @@
   "author": "GitHub",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^3.0.4"
+    "electron": "^3.0.4",
+    "electron-builder": "^20.29.0"
   }
 }
