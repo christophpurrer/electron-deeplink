@@ -16,6 +16,19 @@ const protocolHandler = new ProtocolHandler(PROTOCOL_SCHEME, (linkUrl) => {
   return false;
 });
 
+// Force Single Instance Application
+const shouldQuit = app.makeSingleInstance((argv, workingDirectory) => {
+  // Someone tried to run a second instance, we should focus our window.
+  if (mainWindow && mainWindow.isMinimized()) {
+    mainWindow.restore();
+    mainWindow.focus();
+  }
+});
+if (shouldQuit) {
+  app.quit();
+  return;
+}
+
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({ width: 800, height: 600 })
